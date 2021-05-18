@@ -9,11 +9,9 @@ class Drawing(object):
 
     @staticmethod
     def main():
-        global HEIGHT
-        global WIDTH
-
-        global WINDOW_WIDTH
-        global WINDOW_HEIGHT
+        global HEIGHT, WIDTH
+        global ACCURACY, RANGE, a
+        global WINDOW_WIDTH, WINDOW_HEIGHT
         global Plot
 
         WINDOW_WIDTH = 1200
@@ -21,29 +19,53 @@ class Drawing(object):
         #WINDOW_WIDTH = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), 'Input width of window: ', 'green', 'orange', 'Next', Input_Plot)
         #WINDOW_HEIGHT = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), 'Input height of window: ', 'green', 'orange', 'Next', Input_Plot)
         Drawing.initial_setup()
-
-
-
-
-        HEIGHT = math.ceil(Drawing.function(a, a * 0.95))
-        WIDTH = a / 10 * 12
         Input_Plot.close()
-        Plot = GraphWin('Plot', WINDOW_WIDTH, WINDOW_HEIGHT) # Set window size\ create plot
-
-        Drawing.create_axes(a)
-        Drawing.draw_function(a)
-        Drawing.function_info(a, Plot)
-
-        a_change = Drawing.Input(a / 3, -math.ceil(Drawing.function(a, a * 0.95))*3*4/5, -math.ceil(Drawing.function(a, a * 0.95))*5*7/10 , 'Change a: ', 20, 15, 'grey', Plot)
-
-        Drawing.Button(a / 3, -math.ceil(Drawing.function(a, a * 0.95)) / 5*3, 'Exit', 'orange', 16, Plot, a/10, math.ceil(Drawing.function(a, a*0.95)) / 15, 'exit')
-
-        Drawing.Button(a / 10, -math.ceil(Drawing.function(a, a * 0.95)) / 5*3, 'Change', 'orange', 16, Plot, a / 10, math.ceil(Drawing.function(a, a * 0.95)) / 15, 'change')
 
 
-        if (Drawing.click('exit', Plot)):
-            Plot.close()
+        while True:
+            HEIGHT = math.ceil(Drawing.function(a, a * 0.95))
+            WIDTH = a / 10 * 12
 
+            Plot = GraphWin('Plot', WINDOW_WIDTH, WINDOW_HEIGHT) # Set window size\ create plot
+
+            Drawing.create_axes(a)
+            Drawing.draw_function(a)
+            Drawing.function_info(a, Plot)
+
+            a_change = Drawing.Input(a / 3, -math.ceil(Drawing.function(a, a * 0.95))*3*4/5, -math.ceil(Drawing.function(a, a * 0.95))*5*7/10 , 'Change a: ', 20, 15, 'grey', Plot)
+
+            ACCURACY_change = Drawing.Input(a / 3, -math.ceil(Drawing.function(a, a * 0.95))*3*3/5, -math.ceil(Drawing.function(a, a * 0.95))*5*5/10 , 'Change step: ', 20, 15, 'grey', Plot)
+
+            RANGE_change = Drawing.Input(a / 3, -math.ceil(Drawing.function(a, a * 0.95))*3*2/5, -math.ceil(Drawing.function(a, a * 0.95))*5*3/10 , 'Change range: ', 20, 15, 'grey', Plot)
+
+            Drawing.Button(a / 3, -math.ceil(Drawing.function(a, a * 0.95)) / 5*3, 'Exit', 'orange', 16, Plot, a/10, math.ceil(Drawing.function(a, a*0.95)) / 15, 'exit')
+
+            Drawing.Button(a / 10, -math.ceil(Drawing.function(a, a * 0.95)) / 5*3, 'Change', 'orange', 16, Plot, a / 10, math.ceil(Drawing.function(a, a * 0.95)) / 15, 'change')
+
+            Drawing.Button(a / 4.6, -math.ceil(Drawing.function(a, a * 0.95)) / 5*3, 'Save', 'green', 16, Plot, a / 10, math.ceil(Drawing.function(a, a * 0.95)) / 15, 'save')
+
+            click_wait = Drawing.click(Plot)
+            if click_wait == 'save':
+                Drawing.saving()
+                click_wait = Drawing.click(Plot)
+
+            if click_wait == 'change':
+                a_change = a_change[0].getText()
+                ACCURACY_change = ACCURACY_change[0].getText()
+                RANGE_change = RANGE_change[0].getText().split(' ')
+                if a_change!='' and Drawing.validator(a_change,'a'):
+                    a = float(a_change);
+                    RANGE = [0, a]
+
+                ACCURACY = float(ACCURACY_change) if ACCURACY_change!='' and Drawing.validator(ACCURACY_change,'ACCURACY') else ACCURACY
+                RANGE = RANGE_change if RANGE_change!='' and Drawing.validator(RANGE_change, 'RANGE') else RANGE
+                Plot.close()
+
+
+
+            elif click_wait == 'exit':
+                Plot.close()
+                break
 
     @staticmethod
     def initial_setup():
@@ -57,30 +79,29 @@ class Drawing(object):
 
             a = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), Input_Plot.getHeight(), 'Input parameter a: ', 30, 30, 'red', Input_Plot)
             Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'Next', 'orange', 25, Input_Plot, 0, 0, 'next1')
-            if Drawing.click('next1', Input_Plot):
+            if Drawing.click(Input_Plot) == 'next1':
                 a[1].undraw()
                 a = a[0].getText()
 
             ACCURACY = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(),Input_Plot.getHeight(), 'Input parameter Step: ', 30, 30, 'red', Input_Plot)
             Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'To plot', 'orange', 25, Input_Plot, 0, 0, 'next2')
-            if Drawing.click('next2', Input_Plot):
+            if Drawing.click(Input_Plot) == 'next2':
                 ACCURACY[1].undraw()
                 ACCURACY = ACCURACY[0].getText()
 
-            RANGE = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), Input_Plot.getHeight(), 'Input range separated by commas (0<x<a) : ', 30, 20, 'red', Input_Plot)
+            RANGE = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), Input_Plot.getHeight(), 'Input range separated by пробєл (0<x<a) : ', 30, 20, 'red', Input_Plot)
             Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'To plot', 'orange', 25, Input_Plot, 0, 0, 'to_plot')
-            if Drawing.click('to_plot', Input_Plot):
+            if Drawing.click(Input_Plot) == 'to_plot':
                 RANGE[1].undraw()
-                RANGE = RANGE[0].getText().split(',')
-                if RANGE[1]=='a': RANGE[1]=0.99*float(a)
+                RANGE = RANGE[0].getText().split(' ')
 
             if (Drawing.validator(a, 'a') and Drawing.validator(ACCURACY, 'ACCURACY') and Drawing.validator(RANGE, 'RANGE') and len(RANGE)==2):
                 a = float(a)
                 ACCURACY = float(ACCURACY)
                 break
             else:
-                repeat = Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'Wrong', 'blue', 30, Input_Plot, 0, 0, 'repeat')
-                if Drawing.click('repeat', Input_Plot):
+                repeat = Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'Retry', 'blue', 30, Input_Plot, 0, 0, 'repeat')
+                if Drawing.click(Input_Plot) == 'repeat':
                     Input_Plot.close()
 
     @staticmethod
@@ -147,6 +168,7 @@ class Drawing(object):
     def draw_function(a):
         Width_Multiplier = WIDTH*10/12/a
         Height_Multiplier = HEIGHT/math.ceil(Drawing.function(a, a*0.95))
+        RANGE[1] = 0.99 * float(a) if RANGE[1] == 'a' else RANGE[1]
         for i in np.arange(float(RANGE[0]), float(RANGE[1]), ACCURACY):
             Section = Line(Point(i*Width_Multiplier, Drawing.function(a, i)*Height_Multiplier),
                            Point((i+ACCURACY)*Width_Multiplier, Drawing.function(a, i+ACCURACY)*Height_Multiplier))
@@ -211,23 +233,25 @@ class Drawing(object):
 
 
     @staticmethod
-    def click(element, Plot):
-        coordinates = Buttons[element]
-
-        X_start = coordinates[0]
-        X_end = coordinates[2]
-        Y_start = coordinates[1]
-        Y_end = coordinates[3]
+    def click(Plot):
 
         while(True):
             click = Plot.getMouse()
             print('click')
             click_X = click.getX()
             click_Y = click.getY()
+            for coordinates in Buttons:
+                X_start = Buttons[coordinates][0]
+                X_end = Buttons[coordinates][2]
+                Y_start = Buttons[coordinates][1]
+                Y_end = Buttons[coordinates][3]
 
-            if (click_X > X_start and click_X < X_end and  click_Y > Y_start and click_Y < Y_end):
 
-                return True
+
+                if (click_X > X_start and click_X < X_end and  click_Y > Y_start and click_Y < Y_end):
+                    del Buttons[coordinates]
+                    print(coordinates)
+                    return coordinates
 
     @staticmethod
     def function_info(a, Plot):
@@ -270,13 +294,15 @@ class Drawing(object):
         Value = math.sqrt(pow(x, 3) / round(a - x, 10))
         return Value
 
+
+
+    @staticmethod
+    def saving():
+        Plot.postscript(file="image.eps", colormode='color')
+        EpsImagePlugin.gs_windows_binary = r'gs\gs9.54.0\bin\gswin64c'
+        # Convert from eps format to gif format using PIL
+
+        img = Image.open("image.eps")
+        img.save("Plot.gif", "gif")
+
 Drawing.main()
-
-
-# Saving plot
-"""Plot.postscript(file="image.eps", colormode='color')
-EpsImagePlugin.gs_windows_binary = r'gs\gs9.54.0\bin\gswin64c'
-# Convert from eps format to gif format using PIL
-
-img = Image.open("image.eps")
-img.save("Plot.gif", "gif")"""

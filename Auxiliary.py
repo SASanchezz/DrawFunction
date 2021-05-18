@@ -17,7 +17,12 @@ def checker(element , type, a):
             return False
     elif (type == 'RANGE'):
         try:
+            if element[1] == 'a': element[1] = 0.99 * float(a)
             return float(element[0]) < float(element [1]) and float(element[0]) >= 0 and float(element [1]) < float(a)
         except ValueError as e:
-            print('range error')
+            print('range error: ', element, a)
+            return False
+            #return False
+        except IndexError as e:
+            print('range error with massive')
             return False

@@ -1,7 +1,8 @@
 from graphics import *
 import numpy as np
-from PIL import EpsImagePlugin, Image
 import math
+from PIL import EpsImagePlugin, Image
+
 from Auxiliary import *
 
 class Drawing(object):
@@ -78,13 +79,15 @@ class Drawing(object):
             Input_Plot = GraphWin('Input', 700, 350)
 
             a = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(), Input_Plot.getHeight(), 'Input parameter a: ', 30, 30, 'red', Input_Plot)
+            (Text(Point(350, 175), "x^3 / (a - x)")).draw(Input_Plot)
+
             Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'Next', 'orange', 25, Input_Plot, 0, 0, 'next1')
             if Drawing.click(Input_Plot) == 'next1':
                 a[1].undraw()
                 a = a[0].getText()
 
             ACCURACY = Drawing.Input(Input_Plot.getWidth(), Input_Plot.getHeight(),Input_Plot.getHeight(), 'Input parameter Step: ', 30, 30, 'red', Input_Plot)
-            Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'To plot', 'orange', 25, Input_Plot, 0, 0, 'next2')
+            Drawing.Button(Input_Plot.getWidth() / 2, Input_Plot.getHeight() / 2, 'Next', 'orange', 25, Input_Plot, 0, 0, 'next2')
             if Drawing.click(Input_Plot) == 'next2':
                 ACCURACY[1].undraw()
                 ACCURACY = ACCURACY[0].getText()
